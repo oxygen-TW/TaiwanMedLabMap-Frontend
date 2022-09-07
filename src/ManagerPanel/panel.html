@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.0.3/tocas.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.0.3/tocas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet" />
+    <title>修改檢驗所資料</title>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="panel.js"></script>
+    <script>
+        var isRapidTest = true;
+        function changeState() {
+            isRapidTest = document.getElementById("isRapidTest").checked;
+            console.log(isRapidTest)
+            document.getElementById("rapidTestInput").disabled = !isRapidTest;
+        }
+    </script>
+</head>
+
+<body onload="setLabName()">
+    <div class="ts-content is-tertiary is-fitted">
+        <div class="ts-container is-very-narrow">
+            <div class="ts-tab">
+                <a href="index.html" class="item">修改快篩資料</a>
+                <a href="panel.html" class="item is-active">修改檢驗所資料</a>
+                <a href="changePwd.html" class="item">修改密碼</a>
+                <a href="logout.html" class="item">登出</a>
+            </div>
+        </div>
+    </div>
+    <div class="ts-divider"></div>
+    <div class="ts-content is-tertiary is-vertically-padded">
+        <div class="ts-space"></div>
+        <div class="ts-container is-very-narrow">
+            <div class="ts-header is-big is-heavy">修改檢驗所資料</div>
+            <div class="ts-text is-secondary">您可以在此修改您的檢驗所基本資料</div>
+        </div>
+        <div class="ts-space"></div>
+    </div>
+    <div class="ts-divider"></div>
+    <div class="ts-space is-big"></div>
+    <div class="ts-container is-very-narrow">
+        <div class="ts-grid is-relaxed is-2-columns">
+            <div class="column">
+                <div class="ts-text is-label">檢驗所名稱*</div>
+                <div class="ts-space"></div>
+                <div class="ts-input is-underlined is-fluid">
+                    <input type="text" id="labName" disabled />
+                </div>
+                <div class="ts-space is-small"></div>
+            </div>
+            <div class="column">
+                <div class="ts-text is-label">檢驗所電話*</div>
+                <div class="ts-space"></div>
+                <div class="ts-input is-underlined is-fluid">
+                    <input type="text" id="labPhone" />
+                </div>
+                <div class="ts-space is-small"></div>
+            </div>
+        </div>
+        <div class="ts-space is-large"></div>
+        <div class="ts-text is-label">檢驗所地址*</div>
+        <div class="ts-space"></div>
+        <div class="ts-input is-underlined is-fluid">
+            <input type="text" id="labAddress" />
+        </div>
+        <div class="ts-space is-large"></div>
+        <div class="ts-text is-label">檢驗所網站</div>
+        <div class="ts-space"></div>
+        <div class="ts-input is-underlined is-fluid">
+            <input type="text" id="labWebsite" />
+        </div>
+        <div class="ts-space is-large"></div>
+        <button class="ts-button is-fluid" onclick="updateLabInfo()">儲存</button>
+        <div class="ts-space is-small"></div>
+        <div class="ts-text is-center-aligned is-description">按下「儲存」表示您同意檢驗所快篩試劑平台公開檢驗所基本資料。</div>
+        <div class="ts-text is-center-aligned is-description">更新地址轉換座標太多次要付錢，不要連續改太多次😥😥</div>
+    </div>
+</body>
+
+</html>

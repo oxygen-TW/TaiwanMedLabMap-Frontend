@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>檢驗所快篩地圖</title>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.0.3/tocas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+        integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg=="
+        crossorigin="anonymous">
+        </script>
+    <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+        integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
+        crossorigin="">
+        </script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocas/4.0.3/tocas.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="">
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-K3WBF2EY38"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-K3WBF2EY38');
+    </script>
+</head>
+
+<body onload="HTTPFetch()">
+    <div class="ts-box is-maximal-only" style="height: 100%;">
+        <div class="ts-app-layout is-horizontal" style="height: 100%;">
+            <div class="cell is-scrollable">
+                <div class="ts-container is-narrow">
+                    <div class="ts-space"></div>
+                    <div class="ts-header is-big is-heavy is-center-aligned">離你最近的檢驗所</div>
+                    <div class="ts-divider is-section"></div>
+                    <form >
+                        <label class="ts-radio">
+                            <input name="filter" type="radio" value="0" onclick="filterChange(this)" checked />
+                            全部
+                        </label>
+                        <label class="ts-radio">
+                            <input name="filter" type="radio" value="1" onclick="filterChange(this)" />
+                            有販售快篩
+                        </label>
+                        <label class="ts-radio">
+                            <input name="filter" value="2" type="radio" onclick="filterChange(this)" />
+                            快篩有庫存
+                        </label>
+                    </form>
+                    <div class="ts-space"></div>
+                    <div id="nearlab_card"></div>
+                </div>
+            </div>
+            <div class="cell is-fluid">
+                <div class="ts-content" id="map" style="height: 100%;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 手機RWD -->
+    <div class="ts-box is-not-maximal" style="height: 100vh;">
+        <div class="cell is-fluid" style="height: 90vh;">
+            <div class="ts-content" id="map-mobile" style="height: 100%;"></div>
+        </div>
+        <div class="cell">
+            <div class="ts-content">
+                <div class="ts-app-navbar is-fluid">
+                    <button class="item" id="nearby">
+                        <div class="ts-icon is-flag-icon"></div>
+                        <div class="label">查看附近</div>
+                        </a>
+                        <button class="item" id="filter">
+                            <div class="ts-icon is-user-icon"></div>
+                            <div class="label">進階篩選</div>
+                            </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 手機版附近檢驗所彈出視窗 -->
+    <div class="ts-modal" id="nearView">
+        <div class="content">
+            <div class="ts-content is-dense">
+                <div class="ts-row">
+                    <div class="column is-fluid">
+                        <div class="ts-header">離你最近的檢驗所</div>
+                    </div>
+                    <div class="column">
+                        <button class="ts-close" id="nearExit"></button>
+                    </div>
+                </div>
+            </div>
+            <div class="ts-divider"></div>
+            <div class="ts-content">
+                <div id="nearlab_card_mobile"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 手機版登入視窗 -->
+    <div class="ts-modal" id="filterView">
+        <div class="ts-segment" style="width: 260px">
+            <div class="ts-wrap is-vertical">
+                <div class="ts-row">
+                    <div class="column is-fluid">
+                        <div class="ts-header">進階篩選</div>
+                    </div>
+                    <div class="column">
+                        <button class="ts-close" id="filterExit"></button>
+                    </div>
+                </div>
+                <div class="ts-wrap is-vertical is-compact">
+                    <label class="ts-radio">
+                        <input name="filter" type="radio" value="0" onclick="filterChange(this)" checked />
+                        全部
+                    </label>
+                    <label class="ts-radio">
+                        <input name="filter" type="radio" value="1" onclick="filterChange(this)" />
+                        有販售快篩
+                    </label>
+                    <label class="ts-radio">
+                        <input name="filter" value="2" type="radio" onclick="filterChange(this)" />
+                        快篩有庫存
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="main.js"></script>
+<script src="drawMap.js "></script>
+<script src="popup.js"></script>
+
+</html>
